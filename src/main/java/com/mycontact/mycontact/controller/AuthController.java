@@ -35,7 +35,7 @@ public class AuthController {
             @ApiResponse(responseCode = "200", description = "Utilisateur créé avec succès", content = @Content()),
             @ApiResponse(responseCode = "400", description = "Email déjà utilisé", content = @Content())
     })
-    public ResponseEntity<?> register(@RequestBody UserModel request) {
+    public ResponseEntity<?> register(UserModel request) {
         try {
             UserModel savedUser = userService.register(request);
             return ResponseEntity.ok(savedUser);
@@ -50,7 +50,7 @@ public class AuthController {
             @ApiResponse(responseCode = "200", description = "Utilisateur connecté avec succès", content = @Content()),
             @ApiResponse(responseCode = "401", description = "Email ou mot de passe incorrect", content = @Content())
     })
-    public ResponseEntity<?> login(@RequestBody UserModel request) {
+    public ResponseEntity<?> login(UserModel request) {
         try {
             Authentication authentication = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(

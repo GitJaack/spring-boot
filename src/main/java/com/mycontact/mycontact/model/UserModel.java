@@ -37,11 +37,10 @@ public class UserModel {
 
     @Override
     public String toString() {
-        return "User{" +
+        return "UserModel{" +
                 "id=" + id +
                 ", email='" + email + '\'' +
                 ", createdAt=" + createdAt +
                 '}';
     }
-
 }
