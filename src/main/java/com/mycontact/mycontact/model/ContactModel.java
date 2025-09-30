@@ -31,8 +31,4 @@ public class ContactModel {
         this.phone = phone;
         this.owner = owner;
     }
-
-    public void setOwner(UserModel owner) {
-        this.owner = owner;
-    }
 }

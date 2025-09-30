@@ -4,6 +4,7 @@ import java.security.Principal;
 import java.util.List;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.annotation.*;
 
 import com.mycontact.mycontact.model.ContactModel;
@@ -16,6 +17,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.persistence.EntityNotFoundException;
 
 @Tag(name = "Contacts")
 @RestController
@@ -57,10 +59,18 @@ public class ContactController {
     @Operation(summary = "Supprime un contact")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Contact supprimé avec succès", content = @Content()),
+            @ApiResponse(responseCode = "403", description = "Vous n'avez pas l'autorisation de supprimer ce contact", content = @Content()),
     })
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> deleteContact(Long id) {
-        contactService.deleteContact(id);
-        return ResponseEntity.ok("Contact supprimé avec succès");
+    public ResponseEntity<?> deleteContact(@PathVariable("id") Long id, Principal principal) {
+        try {
+            UserModel user = userService.findByEmail(principal.getName());
+            contactService.deleteContact(id, user);
+            return ResponseEntity.ok("Contact supprimé avec succès");
+        } catch (EntityNotFoundException e) {
+            return ResponseEntity.status(404).body(e.getMessage());
+        } catch (AccessDeniedException e) {
+            return ResponseEntity.status(403).body(e.getMessage());
+        }
     }
 }
