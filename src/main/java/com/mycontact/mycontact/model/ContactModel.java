@@ -2,7 +2,6 @@ package com.mycontact.mycontact.model;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
-
 import lombok.Data;
 
 @Entity
@@ -13,6 +12,7 @@ public class ContactModel {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Schema(hidden = true)
     private Long id;
+
     private String nom;
     private String prenom;
     private String phone;

@@ -8,9 +8,11 @@ import org.springframework.stereotype.Service;
 
 import com.mycontact.mycontact.model.ContactModel;
 import com.mycontact.mycontact.model.UserModel;
+import com.mycontact.mycontact.model.DTO.ContactDTO;
 import com.mycontact.mycontact.repository.ContactRepository;
 
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.validation.Valid;
 
 @Service
 public class ContactService {
@@ -21,7 +23,12 @@ public class ContactService {
         this.contactRepository = contactRepository;
     }
 
-    public ContactModel createContact(ContactModel contact) {
+    public ContactModel createContact(ContactDTO request, @Valid UserModel user) {
+        ContactModel contact = new ContactModel();
+        contact.setNom(request.getNom());
+        contact.setPrenom(request.getPrenom());
+        contact.setPhone(request.getPhone());
+        contact.setOwner(user);
         return contactRepository.save(contact);
     }
 

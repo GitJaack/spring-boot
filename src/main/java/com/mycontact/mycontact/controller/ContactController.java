@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 
 import com.mycontact.mycontact.model.ContactModel;
 import com.mycontact.mycontact.model.UserModel;
+import com.mycontact.mycontact.model.DTO.ContactDTO;
 import com.mycontact.mycontact.service.ContactService;
 import com.mycontact.mycontact.service.UserService;
 
@@ -18,6 +19,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.validation.Valid;
 
 @Tag(name = "Contacts")
 @RestController
@@ -37,12 +39,10 @@ public class ContactController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Contact ajouté avec succès", content = @Content()),
     })
-    public ResponseEntity<ContactModel> addContact(ContactModel contact, Principal principal) {
-        // Récupérer l’utilisateur connecté
-        String email = principal.getName();
-        UserModel user = userService.findByEmail(email);
-        contact.setOwner(user);
-        return ResponseEntity.ok(contactService.createContact(contact));
+    public ResponseEntity<ContactModel> addContact(@Valid @RequestBody ContactDTO dto, Principal principal) {
+        UserModel user = userService.findByEmail(principal.getName());
+        ContactModel contact = contactService.createContact(dto, user);
+        return ResponseEntity.ok(contact);
     }
 
     @Operation(summary = "Récupère tous mes contacts")
@@ -62,7 +62,7 @@ public class ContactController {
             @ApiResponse(responseCode = "403", description = "Vous n'avez pas l'autorisation de supprimer ce contact", content = @Content()),
     })
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> deleteContact(@PathVariable("id") Long id, Principal principal) {
+    public ResponseEntity<?> deleteContact(Long id, Principal principal) {
         try {
             UserModel user = userService.findByEmail(principal.getName());
             contactService.deleteContact(id, user);

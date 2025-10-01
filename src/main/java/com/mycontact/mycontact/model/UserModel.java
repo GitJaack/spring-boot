@@ -16,11 +16,9 @@ public class UserModel {
     private Long id;
 
     @Column(nullable = false, unique = true)
-    @Schema(example = "test1@gmail.com")
     private String email;
 
     @Column(nullable = false)
-    @Schema(example = "1234")
     private String password;
 
     @Schema(hidden = true)
