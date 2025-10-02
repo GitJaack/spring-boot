@@ -1,5 +1,14 @@
 package com.mycontact.mycontact.service;
 
+import java.util.Map;
+
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -9,19 +18,36 @@ import com.mycontact.mycontact.repository.UserRepository;
 
 @Service
 public class UserService {
+    private final AuthenticationManager authenticationManager;
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
 
-    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
+    public UserService(AuthenticationManager authenticationManager, UserRepository userRepository,
+            PasswordEncoder passwordEncoder) {
+        this.authenticationManager = authenticationManager;
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
     }
 
     public UserModel register(RegisterDTO dto) {
+        if (userRepository.existsByEmail(dto.getEmail())) {
+            throw new RuntimeException("Email déjà utilisé");
+        }
         UserModel user = new UserModel();
         user.setEmail(dto.getEmail());
         user.setPassword(passwordEncoder.encode(dto.getPassword()));
         return userRepository.save(user);
+    }
+
+    public String login(String email, String password) {
+        try {
+            Authentication auth = authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(email, password));
+            SecurityContextHolder.getContext().setAuthentication(auth);
+            return auth.getName();
+        } catch (BadCredentialsException e) {
+            throw new RuntimeException("Email ou mot de passe incorrect");
+        }
     }
 
     public UserModel findByEmail(String email) {

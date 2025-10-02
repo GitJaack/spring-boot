@@ -13,8 +13,13 @@ public class ContactModel {
     @Schema(hidden = true)
     private Long id;
 
+    @Column(nullable = false)
     private String nom;
+
+    @Column(nullable = false)
     private String prenom;
+
+    @Column(nullable = false)
     private String phone;
 
     @ManyToOne

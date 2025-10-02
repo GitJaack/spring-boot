@@ -1,9 +1,7 @@
 package com.mycontact.mycontact.service;
 
 import java.util.List;
-import java.util.Optional;
 
-import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 
 import com.mycontact.mycontact.model.ContactModel;
@@ -11,7 +9,6 @@ import com.mycontact.mycontact.model.UserModel;
 import com.mycontact.mycontact.model.DTO.ContactDTO;
 import com.mycontact.mycontact.repository.ContactRepository;
 
-import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 
 @Service
@@ -37,20 +34,13 @@ public class ContactService {
     }
 
     public void deleteContact(Long contactId, UserModel user) {
-
-        Optional<ContactModel> contactModel = contactRepository.findById(contactId);
-
-        if (contactModel.isEmpty()) {
-            throw new EntityNotFoundException("Contact introuvable avec l'id : " + contactId);
-        }
-
-        ContactModel contact = contactModel.get();
+        ContactModel contact = contactRepository.findById(contactId)
+                .orElseThrow(() -> new RuntimeException("Contact introuvable avec l'id : " + contactId));
 
         if (!contact.getOwner().getId().equals(user.getId())) {
-            throw new AccessDeniedException("Vous n'êtes pas autorisé à supprimer ce contact");
+            throw new RuntimeException("Vous n'êtes pas autorisé à supprimer ce contact");
         }
 
-        contactRepository.deleteById(contactId);
-
+        contactRepository.delete(contact);
     }
 }

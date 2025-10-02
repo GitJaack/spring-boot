@@ -48,8 +48,8 @@ public class SecurityConfig {
                         .permitAll()
                         .anyRequest().authenticated())
                 .authenticationProvider(authProvider())
-                .formLogin().disable()
-                .httpBasic();
+                .formLogin().disable();
+
         return http.build();
     }
 }

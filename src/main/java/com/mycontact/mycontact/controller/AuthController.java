@@ -1,11 +1,10 @@
 package com.mycontact.mycontact.controller;
 
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.*;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
+
 import org.springframework.web.bind.annotation.*;
 
+import com.mycontact.mycontact.model.DTO.LoginDTO;
 import com.mycontact.mycontact.model.DTO.RegisterDTO;
 import com.mycontact.mycontact.service.UserService;
 
@@ -21,12 +20,10 @@ import jakarta.validation.Valid;
 @RequestMapping("/auth")
 public class AuthController {
 
-    private final AuthenticationManager authenticationManager;
     private final UserService userService;
 
-    public AuthController(AuthenticationManager authenticationManager,
+    public AuthController(
             UserService userService) {
-        this.authenticationManager = authenticationManager;
         this.userService = userService;
     }
 
@@ -45,13 +42,9 @@ public class AuthController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Utilisateur connecté avec succès", content = @Content()),
     })
-    public ResponseEntity<?> login(@Valid @RequestBody RegisterDTO dto) {
-        Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(
-                        dto.getEmail(),
-                        dto.getPassword()));
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-        return ResponseEntity.ok("Connecté en tant que : " + authentication.getName());
-
+    public ResponseEntity<?> login(@Valid @RequestBody LoginDTO dto) {
+        String username = userService.login(dto.getEmail(), dto.getPassword());
+        return ResponseEntity.ok("Connecté en tant que : " + username);
     }
+
 }
