@@ -58,8 +58,7 @@ public class ContactController {
 
     @Operation(summary = "Supprime un contact")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Contact supprimé avec succès", content = @Content()),
-            @ApiResponse(responseCode = "403", description = "Vous n'avez pas l'autorisation de supprimer ce contact", content = @Content()),
+            @ApiResponse(responseCode = "200", description = "Contact supprimé avec succès", content = @Content())
     })
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteContact(Long id, Principal principal) {
@@ -70,7 +69,7 @@ public class ContactController {
         } catch (EntityNotFoundException e) {
             return ResponseEntity.status(404).body(e.getMessage());
         } catch (AccessDeniedException e) {
-            return ResponseEntity.status(403).body(e.getMessage());
+            return ResponseEntity.status(400).body(e.getMessage());
         }
     }
 }

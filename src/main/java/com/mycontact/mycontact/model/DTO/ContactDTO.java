@@ -18,8 +18,8 @@ public class ContactDTO {
     @Schema(example = "test1")
     private String prenom;
 
-    @Pattern(regexp = "\\d{10}")
+    @NotBlank(message = "Le numéro de téléphone est obligatoire")
+    @Pattern(regexp = "\\d{10}", message = "Le numéro de téléphone doit contenir 10 chiffres")
     @Schema(example = "1234567890")
-    @Size(max = 10, message = "Le numéro de téléphone ne doit pas dépasser 10 caractères")
     private String phone;
 }

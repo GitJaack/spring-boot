@@ -44,7 +44,7 @@ public class AuthController {
     })
     public ResponseEntity<?> login(@Valid @RequestBody LoginDTO dto) {
         String username = userService.login(dto.getEmail(), dto.getPassword());
-        return ResponseEntity.ok("Connecté en tant que : " + username);
+        return ResponseEntity.status(200).body("Connecté en tant que : " + username);
     }
 
 }
